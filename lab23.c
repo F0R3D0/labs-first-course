@@ -17,6 +17,51 @@ struct node* createNode(int data) {
     return newNode;
 }
 
+// Функция для удаления элемента из дерева
+struct Node* delete(struct Node* node, int data) {
+    if (node == NULL) {
+        return node;
+    } else if (data < node->data) {
+        node->left = delete(node->left, data);
+    } else if (data > node->data) {
+        node->right = delete(node->right, data);
+    } else {
+        if (node->left == NULL && node->right == NULL) {
+            free(node);
+            node = NULL;
+        } else if (node->left == NULL) {
+            struct Node* temp = node;
+            node = node->right;
+            free(temp);
+        } else if (node->right == NULL) {
+            struct Node* temp = node;
+            node = node->left;
+            free(temp);
+        } else {
+            struct Node* temp = node->right;
+            while (temp->left != NULL) {
+                temp = temp->left;
+            }
+            node->data = temp->data;
+            node->right = delete(node->right, temp->data);
+        }
+    }
+    return node;
+}
+ 
+// Функция для вывода элементов дерева в текстовом виде
+void print(struct Node* node, int level) {
+    if (node == NULL) {
+        return;
+    }
+    print(node->right, level + 1);
+    for (int i = 0; i < level; i++) {
+        printf("    ");
+    }
+    printf("%d\n", node->data);
+    print(node->left, level + 1);
+}
+
 // Функция для поиска минимального значения в дереве
 int findMin(struct node* root) {
     if (root == NULL) {
